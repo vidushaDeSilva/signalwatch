@@ -40,6 +40,40 @@ class Settings(BaseSettings):
         case_sensitive=False,
     )
 
+    # Bluesky Jetstream connection and recovery settings.
+    jetstream_url: str = Field(
+        default="wss://jetstream2.us-east.bsky.network/subscribe",
+        alias="JETSTREAM_URL",
+    )
+
+    jetstream_collection: str = Field(
+        default="app.bsky.feed.post",
+        alias="JETSTREAM_COLLECTION",
+    )
+
+    jetstream_cursor_file: str = Field(
+        default="data/checkpoints/bluesky_cursor.json",
+        alias="JETSTREAM_CURSOR_FILE",
+    )
+
+    jetstream_replay_overlap_seconds: int = Field(
+        default=5,
+        ge=0,
+        alias="JETSTREAM_REPLAY_OVERLAP_SECONDS",
+    )
+
+    jetstream_cursor_save_every: int = Field(
+        default=100,
+        ge=1,
+        alias="JETSTREAM_CURSOR_SAVE_EVERY",
+    )
+
+    jetstream_log_every: int = Field(
+        default=100,
+        ge=1,
+        alias="JETSTREAM_LOG_EVERY",
+    )
+
 
 @lru_cache
 def get_settings() -> Settings:

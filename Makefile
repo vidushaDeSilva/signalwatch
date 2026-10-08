@@ -1,8 +1,8 @@
 # Makefile
 # Provides short, repeatable commands for common SignalWatch development tasks.
 
-PYTHON := .venv/bin/python
-PIP := .venv/bin/pip
+PYTHON := .signalwatch/bin/python
+PIP := .signalwatch/bin/pip
 
 .PHONY: install test lint format infra-up infra-down infra-logs kafka-topics producer consumer
 
@@ -38,3 +38,7 @@ producer:
 
 consumer:
 	$(PYTHON) kafka/smoke_consumer.py
+
+# Start the S1 live Bluesky collector.
+bluesky:
+	$(PYTHON) collectors/bluesky_collector.py
