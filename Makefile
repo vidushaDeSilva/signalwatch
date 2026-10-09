@@ -54,3 +54,15 @@ landing-cleanup:
 # Apply safe landing cleanup.
 landing-cleanup-apply:
 	$(PYTHON) -m landing.cleanup --apply
+
+# S4: Preview landing batches without calling Databricks.
+databricks-upload-dry-run:
+	$(PYTHON) -m landing.databricks_uploader --once --dry-run
+
+# S4: Attempt a bounded number of ready batches, then exit.
+databricks-upload-once:
+	$(PYTHON) -m landing.databricks_uploader --once
+
+# S4: Continuously upload newly completed landing batches.
+databricks-upload:
+	$(PYTHON) -m landing.databricks_uploader

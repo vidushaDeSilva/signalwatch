@@ -150,6 +150,29 @@ class Settings(BaseSettings):
         alias="LANDING_ARCHIVED_RETENTION_DAYS",
     )
 
+    # S4: Databricks Files API uploader configuration.
+    databricks_config_profile: str = Field(
+        default="signalwatch",
+        alias="DATABRICKS_CONFIG_PROFILE",
+    )
+
+    signalwatch_volume_path: str = Field(
+        default="/Volumes/signalwatch/bronze/landing",
+        alias="SIGNALWATCH_VOLUME_PATH",
+    )
+
+    databricks_upload_poll_seconds: float = Field(
+        default=15,
+        gt=0,
+        alias="DATABRICKS_UPLOAD_POLL_SECONDS",
+    )
+
+    databricks_upload_max_batches_per_cycle: int = Field(
+        default=5,
+        ge=1,
+        alias="DATABRICKS_UPLOAD_MAX_BATCHES_PER_CYCLE",
+    )
+
 
 @lru_cache
 def get_settings() -> Settings:

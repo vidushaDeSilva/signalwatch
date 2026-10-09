@@ -91,13 +91,27 @@ class BatchWriter:
 
                 row = json.loads(line)
 
-                if row["kafka_topic"] != manifest["kafka_topic"]:
+                try:
+                    topic = row["kafka_topic"]
+                    partition = row["kafka_partition"]
+                    offset = row["kafka_offset"]
+
+                except (KeyError, TypeError) as exc:
+                    raise ValueError(
+                        "Landing batch contains a record with missing or invalid metadata"
+                    ) from exc
+
+                if topic != manifest["kafka_topic"]:
                     raise ValueError("Topic mismatch in landing batch")
 
-                if row["kafka_partition"] != manifest["kafka_partition"]:
+                if partition != manifest["kafka_partition"]:
                     raise ValueError("Partition mismatch in landing batch")
 
-                offsets.append(row["kafka_offset"])
+                if type(offset) is not int or offset < 0:
+                    raise ValueError("Invalid Kafka offset in landing batch")
+
+                offsets.append(offset)
+
                 rows += 1
 
         if not offsets or offsets != sorted(set(offsets)):
