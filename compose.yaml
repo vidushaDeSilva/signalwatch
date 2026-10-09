@@ -59,6 +59,7 @@ services:
     volumes:
       - kafka_data:/var/lib/kafka/data
 
+  # Creates local Kafka topics after the broker becomes healthy.
   kafka-init:
     image: ${KAFKA_IMAGE:-apache/kafka:4.3.1}
     container_name: signalwatch-kafka-init
@@ -69,26 +70,28 @@ services:
 
     environment:
       KAFKA_TEST_TOPIC: ${KAFKA_TEST_TOPIC:-signalwatch.s0.smoke}
+      KAFKA_BLUESKY_TOPIC: ${KAFKA_BLUESKY_TOPIC:-signalwatch.bluesky.posts.v1}
 
     command:
       - /bin/bash
-      - -c
+      - -ec
       - |
-        echo "Creating SignalWatch S0 topic..."
+        for topic in "$${KAFKA_TEST_TOPIC}" "$${KAFKA_BLUESKY_TOPIC}"; do
+          echo "Ensuring Kafka topic exists: $$topic"
 
+          /opt/kafka/bin/kafka-topics.sh \
+            --bootstrap-server kafka:29092 \
+            --create \
+            --if-not-exists \
+            --topic "$$topic" \
+            --partitions 3 \
+            --replication-factor 1
+        done
+
+        echo "Kafka topics:"
         /opt/kafka/bin/kafka-topics.sh \
           --bootstrap-server kafka:29092 \
-          --create \
-          --if-not-exists \
-          --topic "$${KAFKA_TEST_TOPIC}" \
-          --partitions 3 \
-          --replication-factor 1
-
-        echo "Topic ready:"
-        /opt/kafka/bin/kafka-topics.sh \
-          --bootstrap-server kafka:29092 \
-          --describe \
-          --topic "$${KAFKA_TEST_TOPIC}"
+          --list
 
 volumes:
   kafka_data:

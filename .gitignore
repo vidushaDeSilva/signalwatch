@@ -28,3 +28,6 @@ logs/
 # Coverage
 .coverage
 htmlcov/
+
+# Generated landing batches and local checkpoints
+data/

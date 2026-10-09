@@ -42,3 +42,15 @@ consumer:
 # Start the S1 live Bluesky collector.
 bluesky:
 	$(PYTHON) collectors/bluesky_collector.py
+
+# S3: Consume Kafka events into recoverable local batches.
+landing-consumer:
+	$(PYTHON) -m landing.bluesky_landing_consumer
+
+# Preview eligible temporary and uploaded-archive cleanup.
+landing-cleanup:
+	$(PYTHON) -m landing.cleanup
+
+# Apply safe landing cleanup.
+landing-cleanup-apply:
+	$(PYTHON) -m landing.cleanup --apply
